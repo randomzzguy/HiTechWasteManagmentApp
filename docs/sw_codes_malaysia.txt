@@ -1,0 +1,113 @@
+﻿MALAYSIA SCHEDULED WASTE CODES - FIRST SCHEDULE
+Environmental Quality (Scheduled Wastes) Regulations 2005
+Under the Environmental Quality Act 1974 (Act 127)
+
+PART I - SCHEDULED WASTES
+
+SW 102 - Waste that contains cyanide
+Description: Waste containing cyanide compounds including plating bath waste, stripping solutions
+Physical state: Liquid/Solid
+Storage limit: 90 days from generation date
+Packaging: Sealed drums, clearly labelled
+
+SW 104 - Waste that contains mercury or mercury compounds
+Description: Mercury-contaminated equipment, fluorescent lamps, thermometers, batteries
+Physical state: Solid/Liquid
+Storage limit: 90 days
+Packaging: Double-sealed containers
+
+SW 204 - Waste mineral oil/water mixtures or emulsions
+Description: Cutting fluids, rolling emulsions, hydraulic fluid emulsions
+Physical state: Liquid
+Storage limit: 90 days
+Packaging: 200L drums or IBC containers
+
+SW 305 - Used lubricating oil
+Description: Used engine oil, hydraulic oil, gear oil, transmission fluid
+Physical state: Liquid
+Storage limit: 90 days from collection date
+Packaging: 200L steel drums, IBC containers
+Disposal: Licensed scheduled waste contractor, Kualiti Alam or approved facility
+Note: Must not be mixed with other waste streams
+
+SW 306 - Waste fuel (petrol, diesel, fuel oil, spent fuel)
+Description: Off-specification fuel, contaminated diesel, spent fuel oil
+Physical state: Liquid
+Storage limit: 90 days
+Packaging: Sealed fuel-grade containers
+
+SW 322 - Waste that contains polychlorinated biphenyls (PCBs)
+Description: PCB-containing transformers, capacitors, hydraulic fluids
+Physical state: Solid/Liquid
+Storage limit: 90 days
+Special handling: Requires DOE notification before disposal
+
+SW 401 - Clinical waste
+Description: Sharps, pathological waste, contaminated dressings, pharmaceutical waste
+Physical state: Solid
+Storage limit: 90 days (refrigerated storage recommended)
+Packaging: Yellow clinical waste bags, sharps containers
+Disposal: Incineration at licensed clinical waste facility
+
+SW 408 - Asbestos waste
+Description: Asbestos-containing materials, insulation, ceiling tiles
+Physical state: Solid
+Storage limit: 90 days
+Packaging: Double-sealed heavy-duty bags, clearly labelled ASBESTOS
+
+SW 409 - Used tyres
+Description: End-of-life tyres from vehicles, machinery
+Physical state: Solid
+Storage limit: 90 days
+Note: Maximum 500 tyres per storage area
+
+SW 410 - Batteries
+Description: Lead-acid batteries, lithium batteries, NiCd batteries, alkaline batteries
+Physical state: Solid
+Storage limit: 90 days
+Packaging: Original packaging or sealed containers, terminals protected
+Note: Lead-acid batteries must be stored upright, no stacking
+
+SW 420 - Electronic waste (e-waste)
+Description: Computers, phones, circuit boards, CRT monitors, printers
+Physical state: Solid
+Storage limit: 90 days
+Packaging: Sealed containers, anti-static bags for circuit boards
+
+SW 422 - Waste photographic chemicals
+Description: Developer, fixer, bleach-fix solutions, stop bath
+Physical state: Liquid
+Storage limit: 90 days
+Packaging: Original containers or chemical-resistant drums
+
+SW 440 - Pharmaceutical waste
+Description: Expired medicines, cytotoxic drugs, vaccines, controlled substances
+Physical state: Solid/Liquid
+Storage limit: 90 days
+Special handling: Cytotoxic waste requires special handling procedures
+
+SW 501 - Leachate from scheduled waste disposal facility
+Description: Landfill leachate, contaminated groundwater
+Physical state: Liquid
+Storage limit: 90 days
+
+SW 503 - Contaminated soil
+Description: Hydrocarbon-contaminated soil from spills, petroleum-contaminated earth
+Physical state: Solid
+Storage limit: 90 days
+Note: Requires characterisation before disposal
+
+COMPLIANCE REQUIREMENTS:
+1. All scheduled waste must be stored in designated storage areas
+2. Storage area must be labelled with SW code and hazard symbols
+3. 90-day storage limit strictly enforced under EQA Act 127
+4. Consignment note (e-SWIS) required for all scheduled waste movements
+5. Only licensed contractors may transport scheduled waste
+6. Cenviro Sdn Bhd is the primary licensed processor in Malaysia
+7. Records must be kept for minimum 3 years
+8. DOE inspection may occur at any time
+
+PENALTIES:
+- Exceeding 90-day storage limit: Fine up to RM500,000 or imprisonment up to 5 years
+- Improper disposal: Fine up to RM500,000 or imprisonment up to 5 years
+- Failure to maintain records: Fine up to RM100,000

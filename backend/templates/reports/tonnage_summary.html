@@ -1,0 +1,193 @@
+{% extends "base_report.html" %}
+
+{% block title %}Tonnage Summary Report{% endblock %}
+{% block report_title %}Waste Tonnage Summary Report{% endblock %}
+
+{% block content %}
+<!-- Key Metrics -->
+<div class="summary-grid">
+    <div class="summary-item">
+        <div class="summary-label">Total Weighbridge Records</div>
+        <div class="summary-value">{{ total_records }}</div>
+    </div>
+    <div class="summary-item">
+        <div class="summary-label">Gross Weight</div>
+        <div class="summary-value">{{ "{:,.1f}".format(total_gross_kg / 1000) }}t</div>
+    </div>
+    <div class="summary-item">
+        <div class="summary-label">Tare Weight</div>
+        <div class="summary-value">{{ "{:,.1f}".format(total_tare_kg / 1000) }}t</div>
+    </div>
+    <div class="summary-item">
+        <div class="summary-label">Net Weight</div>
+        <div class="summary-value" style="color: #1a5c2a;">{{ "{:,.1f}".format(total_net_kg / 1000) }}t</div>
+    </div>
+</div>
+
+<!-- Daily Breakdown -->
+<div class="section-title">Daily Tonnage Summary</div>
+<table>
+    <thead>
+        <tr>
+            <th>Date</th>
+            <th>Vehicle Trips</th>
+            <th>Gross (kg)</th>
+            <th>Tare (kg)</th>
+            <th>Net (kg)</th>
+            <th>Net (tonnes)</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for day in daily_breakdown %}
+        <tr>
+            <td>{{ day.date }}</td>
+            <td>{{ day.trips }}</td>
+            <td>{{ "{:,.1f}".format(day.gross_kg) }}</td>
+            <td>{{ "{:,.1f}".format(day.tare_kg) }}</td>
+            <td>{{ "{:,.1f}".format(day.net_kg) }}</td>
+            <td><strong>{{ "{:,.2f}".format(day.net_kg / 1000) }}</strong></td>
+        </tr>
+        {% endfor %}
+        <tr style="background: #e8f5e9; font-weight: bold;">
+            <td>TOTAL</td>
+            <td>{{ total_trips }}</td>
+            <td>{{ "{:,.1f}".format(total_gross_kg) }}</td>
+            <td>{{ "{:,.1f}".format(total_tare_kg) }}</td>
+            <td>{{ "{:,.1f}".format(total_net_kg) }}</td>
+            <td>{{ "{:,.2f}".format(total_net_kg / 1000) }}</td>
+        </tr>
+    </tbody>
+</table>
+
+<!-- By Waste Type -->
+<div class="section-title">Tonnage by Waste Type</div>
+<table>
+    <thead>
+        <tr>
+            <th>Waste Category</th>
+            <th>Records</th>
+            <th>Net Weight (kg)</th>
+            <th>Net Weight (tonnes)</th>
+            <th>% of Total</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for waste in waste_type_breakdown %}
+        <tr>
+            <td>{{ waste.category }}</td>
+            <td>{{ waste.records }}</td>
+            <td>{{ "{:,.1f}".format(waste.net_kg) }}</td>
+            <td>{{ "{:,.2f}".format(waste.net_kg / 1000) }}</td>
+            <td>{{ waste.percentage }}%</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<!-- By Client -->
+<div class="section-title">Top Clients by Tonnage</div>
+<table>
+    <thead>
+        <tr>
+            <th>Client</th>
+            <th>Trips</th>
+            <th>Net Weight (tonnes)</th>
+            <th>% of Total</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for client in top_clients %}
+        <tr>
+            <td>{{ client.name }}</td>
+            <td>{{ client.trips }}</td>
+            <td>{{ "{:,.2f}".format(client.net_tonnes) }}</td>
+            <td>{{ client.percentage }}%</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<!-- Vehicle Utilization -->
+<div class="section-title">Vehicle Utilization</div>
+<table>
+    <thead>
+        <tr>
+            <th>Vehicle</th>
+            <th>Driver</th>
+            <th>Trips</th>
+            <th>Net Weight (tonnes)</th>
+            <th>Avg per Trip (tonnes)</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for vehicle in vehicle_utilization %}
+        <tr>
+            <td>{{ vehicle.registration }}</td>
+            <td>{{ vehicle.driver }}</td>
+            <td>{{ vehicle.trips }}</td>
+            <td>{{ "{:,.2f}".format(vehicle.net_tonnes) }}</td>
+            <td>{{ "{:,.2f}".format(vehicle.avg_tonnes_per_trip) }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<!-- Trend Analysis -->
+<div class="section-title">Period-over-Period Comparison</div>
+<table>
+    <thead>
+        <tr>
+            <th>Metric</th>
+            <th>Previous Period</th>
+            <th>Current Period</th>
+            <th>Change</th>
+            <th>Change %</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>Total Net Weight</td>
+            <td>{{ "{:,.2f}".format(prev_net_tonnes) }}t</td>
+            <td>{{ "{:,.2f}".format(current_net_tonnes) }}t</td>
+            <td>{{ "{:+.2f}".format(current_net_tonnes - prev_net_tonnes) }}t</td>
+            <td><span class="status-badge {% if tonnage_change_pct >= 0 %}status-success{% else %}status-warning{% endif %}">
+                {{ "{:+.1f}".format(tonnage_change_pct) }}%
+            </span></td>
+        </tr>
+        <tr>
+            <td>Total Trips</td>
+            <td>{{ prev_trips }}</td>
+            <td>{{ current_trips }}</td>
+            <td>{{ "{:+d}".format(current_trips - prev_trips) }}</td>
+            <td><span class="status-badge {% if trips_change_pct >= 0 %}status-success{% else %}status-warning{% endif %}">
+                {{ "{:+.1f}".format(trips_change_pct) }}%
+            </span></td>
+        </tr>
+        <tr>
+            <td>Avg Weight per Trip</td>
+            <td>{{ "{:,.2f}".format(prev_avg_tonnes) }}t</td>
+            <td>{{ "{:,.2f}".format(current_avg_tonnes) }}t</td>
+            <td>{{ "{:+.2f}".format(current_avg_tonnes - prev_avg_tonnes) }}t</td>
+            <td><span class="status-badge {% if avg_change_pct >= 0 %}status-success{% else %}status-warning{% endif %}">
+                {{ "{:+.1f}".format(avg_change_pct) }}%
+            </span></td>
+        </tr>
+    </tbody>
+</table>
+
+<!-- Notes -->
+<div class="section-title">Notes & Methodology</div>
+<div style="background: #f8f9fa; padding: 15px; border-radius: 6px; font-size: 9pt;">
+    <p><strong>Weighbridge Data Collection:</strong></p>
+    <ul style="margin: 10px 0; padding-left: 20px;">
+        <li>Gross weight: Vehicle + load weight at entry</li>
+        <li>Tare weight: Empty vehicle weight at exit</li>
+        <li>Net weight: Calculated as Gross - Tare</li>
+        <li>All weights captured via calibrated weighbridge with ±20kg accuracy</li>
+    </ul>
+    <p style="margin-top: 10px; color: #666;">
+        Data stored in TimescaleDB hypertable for time-series optimization. 
+        Report generated from {{ total_records }} weighbridge records.
+    </p>
+</div>
+{% endblock %}

@@ -1,0 +1,264 @@
+{% extends "base_report.html" %}
+
+{% block title %}Recyclables Recovery Report{% endblock %}
+{% block report_title %}Recyclables Recovery & Traceability Report{% endblock %}
+
+{% block content %}
+<!-- Recovery Summary -->
+<div class="summary-grid">
+    <div class="summary-item">
+        <div class="summary-label">Total Recovered</div>
+        <div class="summary-value">{{ "{:,.1f}".format(total_recovered_kg / 1000) }}t</div>
+    </div>
+    <div class="summary-item">
+        <div class="summary-label">Recovery Records</div>
+        <div class="summary-value">{{ total_records }}</div>
+    </div>
+    <div class="summary-item">
+        <div class="summary-label">Downstream Buyers</div>
+        <div class="summary-value">{{ downstream_buyer_count }}</div>
+    </div>
+    <div class="summary-item">
+        <div class="summary-label">Diversion Rate</div>
+        <div class="summary-value" style="color: #1a5c2a;">{{ diversion_rate }}%</div>
+    </div>
+</div>
+
+<!-- Material Breakdown -->
+<div class="section-title">Material Recovery by Type</div>
+<table>
+    <thead>
+        <tr>
+            <th>Material Type</th>
+            <th>Records</th>
+            <th>Quantity (kg)</th>
+            <th>Quantity (tonnes)</th>
+            <th>% of Total</th>
+            <th>Est. Value (RM)</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for material in material_breakdown %}
+        <tr>
+            <td><strong>{{ material.type }}</strong></td>
+            <td>{{ material.records }}</td>
+            <td>{{ "{:,.1f}".format(material.quantity_kg) }}</td>
+            <td>{{ "{:,.2f}".format(material.quantity_kg / 1000) }}</td>
+            <td>{{ material.percentage }}%</td>
+            <td>RM {{ "{:,.2f}".format(material.estimated_value) }}</td>
+        </tr>
+        {% endfor %}
+        <tr style="background: #e8f5e9; font-weight: bold;">
+            <td>TOTAL</td>
+            <td>{{ total_records }}</td>
+            <td>{{ "{:,.1f}".format(total_recovered_kg) }}</td>
+            <td>{{ "{:,.2f}".format(total_recovered_kg / 1000) }}</td>
+            <td>100%</td>
+            <td>RM {{ "{:,.2f}".format(total_estimated_value) }}</td>
+        </tr>
+    </tbody>
+</table>
+
+<!-- Chain of Custody -->
+<div class="section-title">Chain of Custody - Source to Buyer</div>
+<table>
+    <thead>
+        <tr>
+            <th>Record ID</th>
+            <th>Source Client</th>
+            <th>Material</th>
+            <th>Quantity (kg)</th>
+            <th>Collection Date</th>
+            <th>Downstream Buyer</th>
+            <th>Status</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for record in custody_chain %}
+        <tr>
+            <td>{{ record.id }}</td>
+            <td>{{ record.client_name }}</td>
+            <td>{{ record.material_type }}</td>
+            <td>{{ "{:,.1f}".format(record.quantity_kg) }}</td>
+            <td>{{ record.collection_date }}</td>
+            <td>{{ record.buyer_name or 'Pending' }}</td>
+            <td>
+                {% if record.status == 'delivered' %}
+                <span class="status-badge status-success">Delivered</span>
+                {% elif record.status == 'in_transit' %}
+                <span class="status-badge status-info">In Transit</span>
+                {% elif record.status == 'collected' %}
+                <span class="status-badge status-warning">Collected</span>
+                {% else %}
+                <span class="status-badge">{{ record.status }}</span>
+                {% endif %}
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<!-- Downstream Buyer Summary -->
+<div class="section-title">Downstream Buyer Performance</div>
+<table>
+    <thead>
+        <tr>
+            <th>Buyer Name</th>
+            <th>Material Types</th>
+            <th>Deliveries</th>
+            <th>Total Qty (tonnes)</th>
+            <th>Revenue (RM)</th>
+            <th>DOE License</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for buyer in buyer_summary %}
+        <tr>
+            <td><strong>{{ buyer.name }}</strong></td>
+            <td>{{ buyer.material_types }}</td>
+            <td>{{ buyer.deliveries }}</td>
+            <td>{{ "{:,.2f}".format(buyer.total_tonnes) }}</td>
+            <td>RM {{ "{:,.2f}".format(buyer.revenue) }}</td>
+            <td>
+                {% if buyer.has_doe_license %}
+                <span class="status-badge status-success">✓ Valid</span>
+                {% else %}
+                <span class="status-badge status-danger">✗ Missing</span>
+                {% endif %}
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<!-- Recycling Certificates Issued -->
+<div class="section-title">Certificates of Recycling Issued</div>
+<table>
+    <thead>
+        <tr>
+            <th>Certificate No.</th>
+            <th>Client</th>
+            <th>Materials</th>
+            <th>Total Weight (kg)</th>
+            <th>Date Issued</th>
+            <th>Issued By</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for cert in certificates_issued %}
+        <tr>
+            <td>{{ cert.number }}</td>
+            <td>{{ cert.client_name }}</td>
+            <td>{{ cert.materials_summary }}</td>
+            <td>{{ "{:,.1f}".format(cert.total_weight_kg) }}</td>
+            <td>{{ cert.issued_at }}</td>
+            <td>{{ cert.issued_by }}</td>
+        </tr>
+        {% endfor %}
+        {% if not certificates_issued %}
+        <tr>
+            <td colspan="6" style="text-align: center; color: #666;">No certificates issued this period</td>
+        </tr>
+        {% endif %}
+    </tbody>
+</table>
+
+<!-- Client Recovery Summary -->
+<div class="section-title">Recovery by Client</div>
+<table>
+    <thead>
+        <tr>
+            <th>Client</th>
+            <th>Material Types</th>
+            <th>Total Recovered (kg)</th>
+            <th>Diversion Rate</th>
+            <th>Certificate Count</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for client in client_summary %}
+        <tr>
+            <td><strong>{{ client.name }}</strong></td>
+            <td>{{ client.material_types }}</td>
+            <td>{{ "{:,.1f}".format(client.total_recovered_kg) }}</td>
+            <td>{{ client.diversion_rate }}%</td>
+            <td>{{ client.certificate_count }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<!-- Carbon Impact -->
+<div class="section-title">Environmental Impact - Carbon Savings</div>
+<table>
+    <thead>
+        <tr>
+            <th>Material Type</th>
+            <th>Quantity Recycled (tonnes)</th>
+            <th>Emission Factor (tCO₂e/tonne)</th>
+            <th>Carbon Avoided (tCO₂e)</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for impact in carbon_impact %}
+        <tr>
+            <td>{{ impact.material_type }}</td>
+            <td>{{ "{:,.2f}".format(impact.quantity_tonnes) }}</td>
+            <td>{{ impact.emission_factor }}</td>
+            <td><strong>{{ "{:,.2f}".format(impact.carbon_avoided) }}</strong></td>
+        </tr>
+        {% endfor %}
+        <tr style="background: #e8f5e9; font-weight: bold;">
+            <td colspan="3" style="text-align: right;">TOTAL CARBON AVOIDED:</td>
+            <td>{{ "{:,.2f}".format(total_carbon_avoided) }} tCO₂e</td>
+        </tr>
+    </tbody>
+</table>
+
+<!-- Recovery Trend -->
+<div class="section-title">Recovery Trend (Period-over-Period)</div>
+<table>
+    <thead>
+        <tr>
+            <th>Material Type</th>
+            <th>Previous Period (kg)</th>
+            <th>Current Period (kg)</th>
+            <th>Change</th>
+            <th>Change %</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for trend in recovery_trends %}
+        <tr>
+            <td>{{ trend.material_type }}</td>
+            <td>{{ "{:,.1f}".format(trend.previous_kg) }}</td>
+            <td>{{ "{:,.1f}".format(trend.current_kg) }}</td>
+            <td>{{ "{:+.1f}".format(trend.change_kg) }}</td>
+            <td>
+                <span class="status-badge {% if trend.change_pct >= 0 %}status-success{% else %}status-warning{% endif %}">
+                    {{ "{:+.1f}".format(trend.change_pct) }}%
+                </span>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<!-- Methodology -->
+<div class="section-title">Traceability & Methodology</div>
+<div style="background: #f8f9fa; padding: 15px; border-radius: 6px; font-size: 9pt;">
+    <p><strong>Chain of Custody Documentation:</strong></p>
+    <ul style="margin: 10px 0; padding-left: 20px;">
+        <li>All recyclable materials weighed and recorded at collection</li>
+        <li>Material segregation tracked by type and client source</li>
+        <li>Delivery to licensed downstream buyers with weighbridge verification</li>
+        <li>Certificates of Recycling issued upon confirmation of recycling</li>
+    </ul>
+    <p style="margin-top: 10px;"><strong>Carbon Calculation Method:</strong></p>
+    <ul style="margin: 10px 0; padding-left: 20px;">
+        <li>Emission factors based on avoided virgin material production</li>
+        <li>Reference: Malaysia GHG Inventory Guidelines & IPCC</li>
+        <li>Scope: Scope 3 Category 5 (Waste Generated in Operations)</li>
+    </ul>
+</div>
+{% endblock %}

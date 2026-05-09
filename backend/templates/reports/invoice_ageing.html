@@ -1,0 +1,302 @@
+{% extends "base_report.html" %}
+
+{% block title %}Invoice Ageing Report{% endblock %}
+{% block report_title %}Accounts Receivable - Invoice Ageing Report{% endblock %}
+
+{% block content %}
+<!-- AR Summary -->
+<div class="summary-grid">
+    <div class="summary-item">
+        <div class="summary-label">Total Invoices</div>
+        <div class="summary-value">{{ total_invoices }}</div>
+    </div>
+    <div class="summary-item">
+        <div class="summary-label">Paid Invoices</div>
+        <div class="summary-value">{{ paid_invoices }}</div>
+    </div>
+    <div class="summary-item">
+        <div class="summary-label">Unpaid Invoices</div>
+        <div class="summary-value" style="color: {% if unpaid_count > 0 %}#dc3545{% else %}#1a5c2a{% endif %};">{{ unpaid_count }}</div>
+    </div>
+    <div class="summary-item">
+        <div class="summary-label">Total Outstanding</div>
+        <div class="summary-value" style="color: {% if total_outstanding > 0 %}#dc3545{% else %}#1a5c2a{% endif %}">RM {{ "{:,.2f}".format(total_outstanding) }}</div>
+    </div>
+</div>
+
+<!-- Ageing Bucket Summary -->
+<div class="section-title">Ageing Summary by Period</div>
+<table>
+    <thead>
+        <tr>
+            <th>Age Category</th>
+            <th>Invoice Count</th>
+            <th>Amount (RM)</th>
+            <th>% of Total AR</th>
+            <th>Status</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>Current (0-30 days)</td>
+            <td>{{ ageing_buckets.current.count }}</td>
+            <td>RM {{ "{:,.2f}".format(ageing_buckets.current.amount) }}</td>
+            <td>{{ ageing_buckets.current.percentage }}%</td>
+            <td><span class="status-badge status-success">Healthy</span></td>
+        </tr>
+        <tr>
+            <td>31-60 days overdue</td>
+            <td>{{ ageing_buckets.days_31_60.count }}</td>
+            <td>RM {{ "{:,.2f}".format(ageing_buckets.days_31_60.amount) }}</td>
+            <td>{{ ageing_buckets.days_31_60.percentage }}%</td>
+            <td><span class="status-badge status-info">Attention</span></td>
+        </tr>
+        <tr>
+            <td>61-90 days overdue</td>
+            <td>{{ ageing_buckets.days_61_90.count }}</td>
+            <td>RM {{ "{:,.2f}".format(ageing_buckets.days_61_90.amount) }}</td>
+            <td>{{ ageing_buckets.days_61_90.percentage }}%</td>
+            <td><span class="status-badge status-warning">Concern</span></td>
+        </tr>
+        <tr>
+            <td>Over 90 days overdue</td>
+            <td>{{ ageing_buckets.over_90.count }}</td>
+            <td>RM {{ "{:,.2f}".format(ageing_buckets.over_90.amount) }}</td>
+            <td>{{ ageing_buckets.over_90.percentage }}%</td>
+            <td><span class="status-badge status-danger">Critical</span></td>
+        </tr>
+        <tr style="background: #f8f9fa; font-weight: bold;">
+            <td>TOTAL OUTSTANDING</td>
+            <td>{{ unpaid_count }}</td>
+            <td>RM {{ "{:,.2f}".format(total_outstanding) }}</td>
+            <td>100%</td>
+            <td>-</td>
+        </tr>
+    </tbody>
+</table>
+
+<!-- Unpaid Invoice Detail -->
+<div class="section-title">Unpaid Invoice Details</div>
+<table>
+    <thead>
+        <tr>
+            <th>Invoice #</th>
+            <th>Client</th>
+            <th>Invoice Date</th>
+            <th>Due Date</th>
+            <th>Days Overdue</th>
+            <th>Total Amount</th>
+            <th>Paid</th>
+            <th>Outstanding</th>
+            <th>Status</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for inv in unpaid_invoices %}
+        <tr>
+            <td><strong>{{ inv.invoice_number }}</strong></td>
+            <td>{{ inv.client_name }}</td>
+            <td>{{ inv.invoice_date }}</td>
+            <td>{{ inv.due_date }}</td>
+            <td>
+                {% if inv.days_overdue > 90 %}
+                <span style="color: #dc3545; font-weight: bold;">{{ inv.days_overdue }} days</span>
+                {% elif inv.days_overdue > 60 %}
+                <span style="color: #ffc107; font-weight: bold;">{{ inv.days_overdue }} days</span>
+                {% elif inv.days_overdue > 30 %}
+                <span style="color: #17a2b8; font-weight: bold;">{{ inv.days_overdue }} days</span>
+                {% else %}
+                <span style="color: #28a745;">{{ inv.days_overdue }} days</span>
+                {% endif %}
+            </td>
+            <td>RM {{ "{:,.2f}".format(inv.total_amount) }}</td>
+            <td>RM {{ "{:,.2f}".format(inv.paid_amount) }}</td>
+            <td><strong>RM {{ "{:,.2f}".format(inv.outstanding_amount) }}</strong></td>
+            <td>
+                {% if inv.status == 'unpaid' %}
+                <span class="status-badge status-danger">Unpaid</span>
+                {% elif inv.status == 'partial' %}
+                <span class="status-badge status-warning">Partial</span>
+                {% elif inv.status == 'disputed' %}
+                <span class="status-badge status-info">Disputed</span>
+                {% else %}
+                <span class="status-badge">{{ inv.status }}</span>
+                {% endif %}
+            </td>
+        </tr>
+        {% endfor %}
+        {% if not unpaid_invoices %}
+        <tr>
+            <td colspan="9" style="text-align: center; color: #28a745; font-weight: bold;">
+                ✓ No outstanding invoices - all accounts current!
+            </td>
+        </tr>
+        {% endif %}
+    </tbody>
+</table>
+
+<!-- Client AR Summary -->
+<div class="section-title">Outstanding by Client</div>
+<table>
+    <thead>
+        <tr>
+            <th>Client</th>
+            <th>Total Invoices</th>
+            <th>Paid</th>
+            <th>Unpaid</th>
+            <th>Total Outstanding</th>
+            <th>Oldest Overdue</th>
+            <th>Risk Level</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for client in client_ar_summary %}
+        <tr>
+            <td><strong>{{ client.name }}</strong></td>
+            <td>{{ client.total_invoices }}</td>
+            <td>{{ client.paid_count }}</td>
+            <td>{{ client.unpaid_count }}</td>
+            <td>RM {{ "{:,.2f}".format(client.total_outstanding) }}</td>
+            <td>
+                {% if client.oldest_overdue_days > 90 %}
+                <span style="color: #dc3545; font-weight: bold;">{{ client.oldest_overdue_days }} days</span>
+                {% elif client.oldest_overdue_days > 60 %}
+                <span style="color: #ffc107; font-weight: bold;">{{ client.oldest_overdue_days }} days</span>
+                {% elif client.oldest_overdue_days > 0 %}
+                <span style="color: #17a2b8;">{{ client.oldest_overdue_days }} days</span>
+                {% else %}
+                <span style="color: #28a745;">Current</span>
+                {% endif %}
+            </td>
+            <td>
+                {% if client.risk_level == 'low' %}
+                <span class="status-badge status-success">Low</span>
+                {% elif client.risk_level == 'medium' %}
+                <span class="status-badge status-warning">Medium</span>
+                {% elif client.risk_level == 'high' %}
+                <span class="status-badge status-danger">High</span>
+                {% else %}
+                <span class="status-badge status-info">{{ client.risk_level }}</span>
+                {% endif %}
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<!-- Recently Paid -->
+<div class="section-title">Recently Paid Invoices</div>
+<table>
+    <thead>
+        <tr>
+            <th>Invoice #</th>
+            <th>Client</th>
+            <th>Amount</th>
+            <th>Invoice Date</th>
+            <th>Paid Date</th>
+            <th>Days to Pay</th>
+            <th>Payment Method</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for inv in recently_paid %}
+        <tr>
+            <td>{{ inv.invoice_number }}</td>
+            <td>{{ inv.client_name }}</td>
+            <td>RM {{ "{:,.2f}".format(inv.total_amount) }}</td>
+            <td>{{ inv.invoice_date }}</td>
+            <td>{{ inv.paid_date }}</td>
+            <td>{{ inv.days_to_pay }}</td>
+            <td>{{ inv.payment_method }}</td>
+        </tr>
+        {% endfor %}
+        {% if not recently_paid %}
+        <tr>
+            <td colspan="7" style="text-align: center; color: #666;">No payments recorded in this period</td>
+        </tr>
+        {% endif %}
+    </tbody>
+</table>
+
+<!-- Collection Metrics -->
+<div class="section-title">Collection Performance Metrics</div>
+<table>
+    <thead>
+        <tr>
+            <th>Metric</th>
+            <th>This Period</th>
+            <th>Previous Period</th>
+            <th>Change</th>
+            <th>Target</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>Average Days to Pay (DSO)</td>
+            <td>{{ current_dso }} days</td>
+            <td>{{ previous_dso }} days</td>
+            <td>
+                <span class="status-badge {% if dso_change <= 0 %}status-success{% else %}status-warning{% endif %}">
+                    {{ "{:+.0f}".format(dso_change) }} days
+                </span>
+            </td>
+            <td>≤ 45 days</td>
+        </tr>
+        <tr>
+            <td>Collection Rate</td>
+            <td>{{ current_collection_rate }}%</td>
+            <td>{{ previous_collection_rate }}%</td>
+            <td>
+                <span class="status-badge {% if collection_rate_change >= 0 %}status-success{% else %}status-danger{% endif %}">
+                    {{ "{:+.1f}".format(collection_rate_change) }}%
+                </span>
+            </td>
+            <td>≥ 95%</td>
+        </tr>
+        <tr>
+            <td>Bad Debt Ratio</td>
+            <td>{{ current_bad_debt_ratio }}%</td>
+            <td>{{ previous_bad_debt_ratio }}%</td>
+            <td>
+                <span class="status-badge {% if bad_debt_change <= 0 %}status-success{% else %}status-danger{% endif %}">
+                    {{ "{:+.2f}".format(bad_debt_change) }}%
+                </span>
+            </td>
+            <td>≤ 2%</td>
+        </tr>
+    </tbody>
+</table>
+
+<!-- Action Items -->
+{% if action_items %}
+<div class="section-title">⚠️ Recommended Actions</div>
+<div style="background: #fff3cd; border: 1px solid #ffc107; padding: 15px; border-radius: 6px; font-size: 9pt;">
+    <ul style="margin: 0; padding-left: 20px;">
+        {% for action in action_items %}
+        <li style="margin-bottom: 8px;">
+            <strong>{{ action.priority }}</strong> - {{ action.description }}
+            <br><em>Client: {{ action.client }} | Amount: RM {{ "{:,.2f}".format(action.amount) }}</em>
+        </li>
+        {% endfor %}
+    </ul>
+</div>
+{% endif %}
+
+<!-- Credit Policy -->
+<div class="section-title">Credit & Collections Policy</div>
+<div style="background: #f8f9fa; padding: 15px; border-radius: 6px; font-size: 9pt;">
+    <p><strong>Standard Terms:</strong></p>
+    <ul style="margin: 10px 0; padding-left: 20px;">
+        <li>Payment terms: Net 30 days from invoice date</li>
+        <li>Late payment interest: 1.5% per month on overdue amounts</li>
+        <li>Credit hold threshold: Any invoice over 60 days overdue</li>
+    </ul>
+    <p style="margin-top: 10px;"><strong>Collection Escalation:</strong></p>
+    <ul style="margin: 10px 0; padding-left: 20px;">
+        <li>30 days: Friendly reminder email</li>
+        <li>45 days: Formal demand letter</li>
+        <li>60 days: Credit hold + management call</li>
+        <li>90 days: Legal action / debt collection agency</li>
+    </ul>
+</div>
+{% endblock %}

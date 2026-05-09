@@ -1,0 +1,73 @@
+﻿GHG PROTOCOL - SCOPE 3 CATEGORY 5: WASTE GENERATED IN OPERATIONS
+Methodology Guide for Hi-Tech Waste Management Sdn. Bhd.
+
+OVERVIEW:
+Scope 3 Category 5 covers emissions from third-party disposal and treatment of waste generated in a company's operations.
+This includes solid waste, wastewater, and hazardous waste disposal.
+
+MALAYSIA-SPECIFIC EMISSION FACTORS:
+
+1. TRANSPORT EMISSIONS
+Diesel fuel emission factor: 2.68 kg CO2e per litre
+Source: IPCC AR6, Malaysia Energy Commission 2023
+Formula: Transport emissions = fuel consumed (L) x 2.68 kg CO2e/L
+
+2. LANDFILL AVOIDANCE CREDIT
+Malaysia landfill methane emission factor: 467 kg CO2e per tonne of waste diverted
+Source: IPCC 2006 Guidelines, Malaysia landfill conditions (tropical climate, high moisture)
+Formula: Landfill avoidance = diverted waste (tonnes) x 467 kg CO2e/tonne
+
+3. RECYCLING CREDITS (WRAP Methodology)
+Paper/Cardboard: 700 kg CO2e saved per tonne recycled
+PET Plastic: 1,500 kg CO2e saved per tonne recycled
+HDPE Plastic: 1,400 kg CO2e saved per tonne recycled
+Aluminium: 9,500 kg CO2e saved per tonne recycled (high energy savings)
+Steel/Ferrous: 1,500 kg CO2e saved per tonne recycled
+Glass: 300 kg CO2e saved per tonne recycled
+Electronic waste: 2,000 kg CO2e saved per tonne recycled (estimated)
+Source: WRAP Material Change for a Better Environment, 2023
+
+4. WASTE-TO-ENERGY CREDIT
+Malaysia grid emission factor: 0.694 kg CO2e per kWh (2022)
+WtE credit: 200 kg CO2e per tonne processed
+Source: Malaysia Energy Commission, Sustainable Energy Development Authority (SEDA)
+
+5. BSF BIOCONVERSION CREDIT
+Food waste to BSF larvae: 550 kg CO2e per tonne of food waste diverted
+Includes: Landfill methane avoidance + fishmeal substitution credit
+Source: IPCC, FAO Life Cycle Assessment of insect protein production
+
+NET CARBON IMPACT FORMULA:
+Net CO2e = Transport Emissions - Landfill Avoidance - Recycling Credits - WtE Credits
+
+A negative net value indicates a net environmental benefit.
+
+DIVERSION RATE CALCULATION:
+Diversion Rate (%) = (Recyclable kg + WtE kg + BSF kg) / Total Waste kg x 100
+
+SDG ALIGNMENT:
+SDG 12: Responsible Consumption and Production
+- Waste diversion reduces resource consumption
+- Recycling closes material loops
+- Target: Substantially reduce waste generation by 2030
+
+SDG 13: Climate Action
+- Carbon credits from waste diversion
+- Reduced methane from landfill avoidance
+- Transport emission reduction through route optimization
+
+SDG 15: Life on Land
+- Reduced landfill expansion
+- Soil contamination prevention
+- Biodiversity protection through proper hazardous waste disposal
+
+REPORTING STANDARDS:
+- GHG Protocol Corporate Value Chain (Scope 3) Standard
+- ISO 14064-1:2018 Greenhouse gases
+- Malaysia Carbon Reduction and Low Carbon Society Blueprint 2040
+- Bursa Malaysia Sustainability Reporting Guide (for listed companies)
+
+VERIFICATION:
+- Third-party verification recommended for material claims
+- SIRIM QAS International for ISO 14064 verification
+- KPMG, Deloitte, PwC for GHG assurance

@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Certificate of Destruction - {{ certificate_number }}</title>
+    <style>
+        @page {
+            size: A4 landscape;
+            margin: 2cm;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Helvetica Neue', Arial, sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #e4e8eb 100%);
+            min-height: 100vh;
+            padding: 40px;
+            color: #333;
+        }
+        
+        .certificate-container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.15);
+            overflow: hidden;
+        }
+        
+        .certificate-header {
+            background: linear-gradient(135deg, #8b0000 0%, #a52a2a 100%);
+            color: white;
+            padding: 40px;
+            text-align: center;
+        }
+        
+        .company-logo {
+            font-size: 28px;
+            font-weight: bold;
+            letter-spacing: 2px;
+            margin-bottom: 8px;
+        }
+        
+        .company-subtitle {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+        
+        .certificate-body {
+            padding: 50px;
+        }
+        
+        .certificate-title {
+            text-align: center;
+            font-size: 42px;
+            font-weight: 700;
+            color: #8b0000;
+            margin-bottom: 8px;
+            letter-spacing: 3px;
+        }
+        
+        .certificate-subtitle {
+            text-align: center;
+            font-size: 16px;
+            color: #666;
+            margin-bottom: 30px;
+            text-transform: uppercase;
+            letter-spacing: 4px;
+        }
+        
+        .legal-warning {
+            background: linear-gradient(135deg, #fff3cd 0%, #ffeaa7 100%);
+            border: 2px solid #ffc107;
+            border-radius: 8px;
+            padding: 15px 20px;
+            margin-bottom: 30px;
+            text-align: center;
+            font-size: 13px;
+            font-weight: 600;
+            color: #856404;
+        }
+        
+        .details-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px 40px;
+            margin-bottom: 30px;
+        }
+        
+        .detail-item {
+            border-bottom: 1px solid #e0e0e0;
+            padding-bottom: 12px;
+        }
+        
+        .detail-label {
+            font-size: 11px;
+            text-transform: uppercase;
+            color: #888;
+            letter-spacing: 1px;
+            margin-bottom: 4px;
+        }
+        
+        .detail-value {
+            font-size: 15px;
+            font-weight: 600;
+            color: #333;
+        }
+        
+        .detail-value.full-width {
+            grid-column: span 2;
+        }
+        
+        .goods-description {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 6px;
+            margin-top: 10px;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+        
+        .certification-text {
+            margin-top: 35px;
+            padding: 25px;
+            background: #fdf2f2;
+            border-radius: 8px;
+            font-size: 14px;
+            line-height: 1.7;
+            color: #555;
+            text-align: center;
+            border-left: 4px solid #8b0000;
+        }
+        
+        .witness-section {
+            margin-top: 40px;
+            text-align: center;
+        }
+        
+        .witness-title {
+            font-size: 12px;
+            text-transform: uppercase;
+            color: #888;
+            letter-spacing: 2px;
+            margin-bottom: 20px;
+        }
+        
+        .signatures {
+            display: flex;
+            justify-content: space-around;
+            margin-top: 30px;
+        }
+        
+        .signature-block {
+            text-align: center;
+            flex: 1;
+            max-width: 250px;
+        }
+        
+        .signature-line {
+            width: 200px;
+            border-top: 2px solid #333;
+            margin: 0 auto 10px;
+            padding-top: 10px;
+        }
+        
+        .signature-name {
+            font-weight: 600;
+            font-size: 14px;
+        }
+        
+        .signature-title {
+            font-size: 12px;
+            color: #666;
+            margin-top: 4px;
+        }
+        
+        .certificate-footer {
+            background: #f5f5f5;
+            padding: 20px 40px;
+            text-align: center;
+            font-size: 11px;
+            color: #888;
+            border-top: 1px solid #e0e0e0;
+        }
+        
+        .watermark {
+            position: absolute;
+            opacity: 0.03;
+            font-size: 180px;
+            color: #8b0000;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) rotate(-30deg);
+            font-weight: bold;
+            pointer-events: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="certificate-container">
+        <div class="watermark">DESTROYED</div>
+        
+        <div class="certificate-header">
+            <div class="company-logo">HI-TECH WASTE MANAGEMENT</div>
+            <div class="company-subtitle">Certified Destruction Services | DOE Licensed | Confidential & Secure</div>
+        </div>
+        
+        <div class="certificate-body">
+            <div class="certificate-title">CERTIFICATE</div>
+            <div class="certificate-subtitle">of Destruction</div>
+            
+            <div class="legal-warning">
+                ⚠️ LEGAL DOCUMENT: This certificate is legally binding. Alteration or falsification is a criminal offence under Malaysian law.
+            </div>
+            
+            <div class="details-grid">
+                <div class="detail-item">
+                    <div class="detail-label">Certificate Number</div>
+                    <div class="detail-value">{{ certificate_number }}</div>
+                </div>
+                <div class="detail-item">
+                    <div class="detail-label">Date of Destruction</div>
+                    <div class="detail-value">{{ destruction_date }}</div>
+                </div>
+                <div class="detail-item">
+                    <div class="detail-label">Client</div>
+                    <div class="detail-value">{{ client_name }}</div>
+                </div>
+                <div class="detail-item">
+                    <div class="detail-label">Destruction Location</div>
+                    <div class="detail-value">{{ destruction_location }}</div>
+                </div>
+                <div class="detail-item">
+                    <div class="detail-label">Quantity</div>
+                    <div class="detail-value">{{ quantity }}</div>
+                </div>
+                <div class="detail-item">
+                    <div class="detail-label">Weight</div>
+                    <div class="detail-value">{{ weight }}</div>
+                </div>
+                <div class="detail-item">
+                    <div class="detail-label">Destruction Method</div>
+                    <div class="detail-value">{{ destruction_method }}</div>
+                </div>
+                <div class="detail-item">
+                    <div class="detail-label">Reason for Destruction</div>
+                    <div class="detail-value">{{ reason }}</div>
+                </div>
+            </div>
+            
+            <div class="detail-item" style="margin-top: 20px;">
+                <div class="detail-label">Goods Description</div>
+                <div class="goods-description">{{ goods_description }}</div>
+            </div>
+            
+            <div class="certification-text">
+                We hereby certify that the above-described goods were completely destroyed in our presence 
+                on <strong>{{ destruction_date }}</strong> at <strong>{{ destruction_location }}</strong> 
+                using the <strong>{{ destruction_method }}</strong> method. The destruction was witnessed 
+                by both Hi-Tech Waste Management personnel and the client representative, and was carried out 
+                in full compliance with all applicable Malaysian environmental and waste management regulations, 
+                including DOE guidelines and ISO 14001 standards. Video and photographic evidence of the 
+                destruction has been archived per our document retention policy.
+            </div>
+            
+            <div class="witness-section">
+                <div class="witness-title">Witnessed By</div>
+                <div class="signatures">
+                    <div class="signature-block">
+                        <div class="signature-line"></div>
+                        <div class="signature-name">{{ witness_hitech }}</div>
+                        <div class="signature-title">Hi-Tech Waste Management<br>Authorised Witness</div>
+                    </div>
+                    <div class="signature-block">
+                        <div class="signature-line"></div>
+                        <div class="signature-name">{{ witness_client }}</div>
+                        <div class="signature-title">{{ witness_client_designation }}<br>{{ client_name }}</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="certificate-footer">
+            Hi-Tech Waste Management Sdn. Bhd. | Shah Alam, Selangor, Malaysia<br>
+            ROC: 123456-X | DOE License: SW-2024-001 | Confidential Destruction Facility<br>
+            Certificate No. {{ certificate_number }} | Valid only with official company stamp and dual signatures.
+        </div>
+    </div>
+</body>
+</html>

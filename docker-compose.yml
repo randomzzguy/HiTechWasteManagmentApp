@@ -1,0 +1,316 @@
+services:
+  # ─────────────────────────────────────────────
+  # Database Backup Service
+  # Runs daily PostgreSQL backups with retention policy
+  # Start: docker compose --profile backup up -d postgres-backup
+  # ─────────────────────────────────────────────
+  postgres-backup:
+    image: postgres:15-alpine
+    container_name: hitech_postgres_backup
+    restart: unless-stopped
+    profiles:
+      - backup
+    environment:
+      POSTGRES_HOST: postgres
+      POSTGRES_PORT: 5432
+      POSTGRES_USER: hitech
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-password}
+      POSTGRES_DB: hitech_waste
+      BACKUP_DIR: /backups
+      RETENTION_DAYS: 30
+    volumes:
+      - ./scripts/backup_postgres.sh:/backup_postgres.sh:ro
+      - postgres_backups:/backups
+    command: >
+      sh -c "chmod +x /backup_postgres.sh &&
+             apk add --no-cache postgresql-client &&
+             while true; do
+               /backup_postgres.sh
+               sleep 86400
+             done"
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  # ─────────────────────────────────────────────
+  # Core Infrastructure
+  # ─────────────────────────────────────────────
+  postgres:
+    image: timescale/timescaledb:latest-pg15
+    container_name: hitech_postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: hitech
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-password}
+      POSTGRES_DB: hitech_waste
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U hitech -d hitech_waste"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  redis:
+    image: redis:7-alpine
+    container_name: hitech_redis
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    command: redis-server --appendonly yes
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # ─────────────────────────────────────────────
+  # MQTT Broker
+  # ─────────────────────────────────────────────
+  mosquitto:
+    image: eclipse-mosquitto:2
+    container_name: hitech_mosquitto
+    restart: unless-stopped
+    ports:
+      - "1883:1883"
+      - "9001:9001"
+    volumes:
+      - ./mosquitto/mosquitto.conf:/mosquitto/config/mosquitto.conf:ro
+    healthcheck:
+      test: ["CMD-SHELL", "mosquitto_sub -t '$$SYS/#' -C 1 -i healthcheck -W 3"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # ─────────────────────────────────────────────
+  # Milvus Dependencies
+  # ─────────────────────────────────────────────
+  etcd:
+    image: quay.io/coreos/etcd:v3.5.5
+    container_name: hitech_etcd
+    restart: unless-stopped
+    environment:
+      - ETCD_AUTO_COMPACTION_MODE=revision
+      - ETCD_AUTO_COMPACTION_RETENTION=1000
+      - ETCD_QUOTA_BACKEND_BYTES=4294967296
+      - ETCD_SNAPSHOT_COUNT=50000
+    volumes:
+      - etcd_data:/etcd
+    command: >
+      etcd
+      --advertise-client-urls=http://127.0.0.1:2379
+      --listen-client-urls=http://0.0.0.0:2379
+      --data-dir=/etcd
+    healthcheck:
+      test: ["CMD", "etcdctl", "endpoint", "health"]
+      interval: 30s
+      timeout: 20s
+      retries: 3
+
+  minio:
+    image: minio/minio:latest
+    container_name: hitech_minio
+    restart: unless-stopped
+    environment:
+      MINIO_ROOT_USER: ${MINIO_ACCESS_KEY:-minioadmin}
+      MINIO_ROOT_PASSWORD: ${MINIO_SECRET_KEY:-minioadmin}
+    ports:
+      - "9000:9000"
+      - "9002:9001"   # console on 9002 to avoid conflict with mosquitto WS on 9001
+    volumes:
+      - minio_data:/data
+    command: minio server /data --console-address ":9001" --address ":9000"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
+      interval: 30s
+      timeout: 20s
+      retries: 3
+
+  # ─────────────────────────────────────────────
+  # Milvus Vector Database
+  # ─────────────────────────────────────────────
+  milvus:
+    image: milvusdb/milvus:v2.3.3
+    container_name: hitech_milvus
+    restart: unless-stopped
+    command: ["milvus", "run", "standalone"]
+    environment:
+      ETCD_ENDPOINTS: etcd:2379
+      MINIO_ADDRESS: minio:9000
+      MINIO_ACCESS_KEY_ID: ${MINIO_ACCESS_KEY:-minioadmin}
+      MINIO_SECRET_ACCESS_KEY: ${MINIO_SECRET_KEY:-minioadmin}
+    ports:
+      - "19530:19530"
+      - "9091:9091"
+    volumes:
+      - milvus_data:/var/lib/milvus
+    depends_on:
+      etcd:
+        condition: service_healthy
+      minio:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9091/healthz"]
+      interval: 30s
+      timeout: 20s
+      retries: 3
+
+  # ─────────────────────────────────────────────
+  # Application Services
+  # NOTE: Ollama runs locally on the host machine (not in Docker).
+  # Set OLLAMA_BASE_URL=http://host.docker.internal:11434 in .env
+  # so backend/celery containers can reach it.
+  # ─────────────────────────────────────────────
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: hitech_backend
+    restart: unless-stopped
+    ports:
+      - "8000:8000"
+    env_file:
+      - .env
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      milvus:
+        condition: service_healthy
+    volumes:
+      - ./backend:/app
+      - ./generated_reports:/app/generated_reports
+      - ./templates:/app/templates
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  celery:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: hitech_celery
+    restart: unless-stopped
+    command: celery -A tasks.celery_app worker --loglevel=info --concurrency=4
+    env_file:
+      - .env
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      milvus:
+        condition: service_healthy
+    volumes:
+      - ./backend:/app
+      - ./generated_reports:/app/generated_reports
+      - ./templates:/app/templates
+    healthcheck:
+      test: ["CMD-SHELL", "cd /app && python -c \"from tasks.celery_app import celery_app; celery_app.control.ping()\" 2>/dev/null || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+
+  celery-beat:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: hitech_celery_beat
+    restart: unless-stopped
+    command: celery -A tasks.celery_app beat --loglevel=info --scheduler celery.beat:PersistentScheduler
+    env_file:
+      - .env
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    volumes:
+      - ./backend:/app
+    healthcheck:
+      test: ["CMD-SHELL", "cd /app && python -c \"from tasks.celery_app import celery_app; celery_app.control.ping()\" 2>/dev/null || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: hitech_frontend
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    env_file:
+      - .env
+    environment:
+      # Override NEXTAUTH_URL inside the container to use the internal hostname.
+      # The browser still uses http://localhost:3000 but the server-side
+      # NextAuth callbacks must resolve within the Docker network.
+      NEXTAUTH_URL: http://localhost:3000
+      NEXTAUTH_URL_INTERNAL: http://hitech_frontend:3000
+      BACKEND_URL: http://backend:8000
+    depends_on:
+      backend:
+        condition: service_healthy
+
+  # ─────────────────────────────────────────────
+  # GPS Simulator (optional — for demo/dev)
+  # Publishes simulated vehicle GPS positions via MQTT.
+  # Start: docker compose --profile simulator up -d gps-simulator
+  # Stop:  docker compose stop gps-simulator
+  # ─────────────────────────────────────────────
+  gps-simulator:
+    image: python:3.11-slim
+    container_name: hitech_gps_simulator
+    restart: "no"
+    profiles:
+      - simulator
+    command: >
+      sh -c "pip install paho-mqtt psycopg2-binary --quiet &&
+             python /scripts/gps_simulator.py"
+    environment:
+      MQTT_BROKER_HOST: mosquitto
+      MQTT_BROKER_PORT: 1883
+      DATABASE_URL: postgresql://hitech:${POSTGRES_PASSWORD:-password}@postgres:5432/hitech_waste
+      GPS_UPDATE_INTERVAL: "5"
+      GPS_SPEED_KMH: "40"
+    depends_on:
+      - mosquitto
+      - postgres
+    volumes:
+      - ./scripts:/scripts
+
+# ─────────────────────────────────────────────
+# Named Volumes
+# ─────────────────────────────────────────────
+volumes:
+  pgdata:
+    driver: local
+  postgres_backups:
+    driver: local
+  etcd_data:
+    driver: local
+  minio_data:
+    driver: local
+  milvus_data:
+    driver: local
+
+# ─────────────────────────────────────────────
+# Networks
+# ─────────────────────────────────────────────
+networks:
+  default:
+    name: hitech_network
+    driver: bridge

@@ -1,0 +1,252 @@
+{% extends "base_report.html" %}
+
+{% block title %}Fleet Utilisation Report{% endblock %}
+{% block report_title %}Fleet Utilisation & Operations Report{% endblock %}
+
+{% block content %}
+<!-- Fleet Overview -->
+<div class="summary-grid">
+    <div class="summary-item">
+        <div class="summary-label">Total Fleet Size</div>
+        <div class="summary-value">{{ total_vehicles }}</div>
+    </div>
+    <div class="summary-item">
+        <div class="summary-label">Active Vehicles</div>
+        <div class="summary-value">{{ active_vehicles }}</div>
+    </div>
+    <div class="summary-item">
+        <div class="summary-label">Total Jobs Completed</div>
+        <div class="summary-value">{{ total_jobs }}</div>
+    </div>
+    <div class="summary-item">
+        <div class="summary-label">Fleet Utilization</div>
+        <div class="summary-value" style="color: #1a5c2a;">{{ utilization_rate }}%</div>
+    </div>
+</div>
+
+<!-- Vehicle Status Breakdown -->
+<div class="section-title">Vehicle Status Overview</div>
+<table>
+    <thead>
+        <tr>
+            <th>Status</th>
+            <th>Count</th>
+            <th>Percentage</th>
+            <th>Description</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for status in status_breakdown %}
+        <tr>
+            <td>
+                {% if status.status == 'available' %}
+                <span class="status-badge status-success">Available</span>
+                {% elif status.status == 'on_job' %}
+                <span class="status-badge status-info">On Job</span>
+                {% elif status.status == 'maintenance' %}
+                <span class="status-badge status-warning">Maintenance</span>
+                {% elif status.status == 'offline' %}
+                <span class="status-badge status-danger">Offline</span>
+                {% else %}
+                <span class="status-badge">{{ status.status }}</span>
+                {% endif %}
+            </td>
+            <td>{{ status.count }}</td>
+            <td>{{ status.percentage }}%</td>
+            <td>{{ status.description }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<!-- Vehicle Performance -->
+<div class="section-title">Vehicle Performance Details</div>
+<table>
+    <thead>
+        <tr>
+            <th>Vehicle</th>
+            <th>Type</th>
+            <th>Driver</th>
+            <th>Jobs</th>
+            <th>Kilometers</th>
+            <th>Fuel (L)</th>
+            <th>Efficiency (km/L)</th>
+            <th>Status</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for vehicle in vehicle_performance %}
+        <tr>
+            <td><strong>{{ vehicle.registration }}</strong></td>
+            <td>{{ vehicle.type }}</td>
+            <td>{{ vehicle.driver }}</td>
+            <td>{{ vehicle.jobs_completed }}</td>
+            <td>{{ "{:,.1f}".format(vehicle.kilometers) }}</td>
+            <td>{{ "{:,.1f}".format(vehicle.fuel_used) }}</td>
+            <td>{{ "{:,.2f}".format(vehicle.efficiency) }}</td>
+            <td>
+                {% if vehicle.status == 'available' %}
+                <span class="status-badge status-success">Available</span>
+                {% elif vehicle.status == 'on_job' %}
+                <span class="status-badge status-info">On Job</span>
+                {% elif vehicle.status == 'maintenance' %}
+                <span class="status-badge status-warning">Maintenance</span>
+                {% else %}
+                <span class="status-badge">{{ vehicle.status }}</span>
+                {% endif %}
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<!-- Maintenance Schedule -->
+<div class="section-title">Upcoming Maintenance</div>
+<table>
+    <thead>
+        <tr>
+            <th>Vehicle</th>
+            <th>Service Type</th>
+            <th>Due Date</th>
+            <th>Days Until Due</th>
+            <th>Current Odometer</th>
+            <th>Status</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for maint in upcoming_maintenance %}
+        <tr>
+            <td>{{ maint.vehicle_registration }}</td>
+            <td>{{ maint.service_type }}</td>
+            <td>{{ maint.due_date }}</td>
+            <td>
+                {% if maint.days_until <= 7 %}
+                <span style="color: #dc3545; font-weight: bold;">{{ maint.days_until }} days</span>
+                {% elif maint.days_until <= 14 %}
+                <span style="color: #ffc107; font-weight: bold;">{{ maint.days_until }} days</span>
+                {% else %}
+                {{ maint.days_until }} days
+                {% endif %}
+            </td>
+            <td>{{ "{:,.0f}".format(maint.current_odometer) }} km</td>
+            <td>
+                {% if maint.status == 'scheduled' %}
+                <span class="status-badge status-info">Scheduled</span>
+                {% elif maint.status == 'overdue' %}
+                <span class="status-badge status-danger">Overdue</span>
+                {% else %}
+                <span class="status-badge">{{ maint.status }}</span>
+                {% endif %}
+            </td>
+        </tr>
+        {% endfor %}
+        {% if not upcoming_maintenance %}
+        <tr>
+            <td colspan="6" style="text-align: center; color: #666;">No upcoming maintenance scheduled</td>
+        </tr>
+        {% endif %}
+    </tbody>
+</table>
+
+<!-- Job Assignment Analysis -->
+<div class="section-title">Job Assignment Analysis</div>
+<table>
+    <thead>
+        <tr>
+            <th>Driver</th>
+            <th>Vehicle</th>
+            <th>Jobs Assigned</th>
+            <th>Jobs Completed</th>
+            <th>Completion Rate</th>
+            <th>Avg Job Duration</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for driver in driver_analysis %}
+        <tr>
+            <td>{{ driver.name }}</td>
+            <td>{{ driver.vehicle }}</td>
+            <td>{{ driver.jobs_assigned }}</td>
+            <td>{{ driver.jobs_completed }}</td>
+            <td>{{ driver.completion_rate }}%</td>
+            <td>{{ driver.avg_duration }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<!-- Fuel Cost Analysis -->
+<div class="section-title">Fuel Cost Analysis</div>
+<table>
+    <thead>
+        <tr>
+            <th>Vehicle</th>
+            <th>Fuel Consumed (L)</th>
+            <th>Distance (km)</th>
+            <th>Fuel Cost (RM)</th>
+            <th>Cost per km (RM)</th>
+            <th>Efficiency Rating</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for fuel in fuel_analysis %}
+        <tr>
+            <td>{{ fuel.vehicle }}</td>
+            <td>{{ "{:,.1f}".format(fuel.fuel_liters) }}</td>
+            <td>{{ "{:,.1f}".format(fuel.distance_km) }}</td>
+            <td>RM {{ "{:,.2f}".format(fuel.fuel_cost) }}</td>
+            <td>RM {{ "{:,.2f}".format(fuel.cost_per_km) }}</td>
+            <td>
+                {% if fuel.efficiency_rating == 'excellent' %}
+                <span class="status-badge status-success">Excellent</span>
+                {% elif fuel.efficiency_rating == 'good' %}
+                <span class="status-badge status-info">Good</span>
+                {% elif fuel.efficiency_rating == 'fair' %}
+                <span class="status-badge status-warning">Fair</span>
+                {% else %}
+                <span class="status-badge status-danger">Poor</span>
+                {% endif %}
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<!-- Operational Summary -->
+<div class="section-title">Operational Summary</div>
+<div style="background: #f8f9fa; padding: 15px; border-radius: 6px; font-size: 9pt;">
+    <div style="display: flex; gap: 30px; flex-wrap: wrap;">
+        <div>
+            <p><strong>Total Distance Covered:</strong></p>
+            <p style="font-size: 14pt; color: #1a5c2a; font-weight: bold;">{{ "{:,.1f}".format(total_distance_km) }} km</p>
+        </div>
+        <div>
+            <p><strong>Total Fuel Consumed:</strong></p>
+            <p style="font-size: 14pt; color: #1a5c2a; font-weight: bold;">{{ "{:,.1f}".format(total_fuel_liters) }} L</p>
+        </div>
+        <div>
+            <p><strong>Fleet Average Efficiency:</strong></p>
+            <p style="font-size: 14pt; color: #1a5c2a; font-weight: bold;">{{ "{:,.2f}".format(fleet_avg_efficiency) }} km/L</p>
+        </div>
+        <div>
+            <p><strong>Total Fuel Cost:</strong></p>
+            <p style="font-size: 14pt; color: #1a5c2a; font-weight: bold;">RM {{ "{:,.2f}".format(total_fuel_cost) }}</p>
+        </div>
+    </div>
+</div>
+
+<!-- Maintenance Alerts -->
+{% if maintenance_alerts %}
+<div class="section-title">⚠️ Maintenance Alerts</div>
+<div style="background: #fff3cd; border: 1px solid #ffc107; padding: 15px; border-radius: 6px; font-size: 9pt;">
+    <ul style="margin: 0; padding-left: 20px;">
+        {% for alert in maintenance_alerts %}
+        <li style="margin-bottom: 8px;">
+            <strong>{{ alert.vehicle }}</strong>: {{ alert.message }}
+            <br><em>Action: {{ alert.recommended_action }}</em>
+        </li>
+        {% endfor %}
+    </ul>
+</div>
+{% endif %}
+{% endblock %}

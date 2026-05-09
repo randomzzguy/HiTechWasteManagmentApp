@@ -1,0 +1,48 @@
+﻿MALAYSIA CARBON EMISSION FACTORS
+Reference Document for Carbon Accounting
+
+ENERGY EMISSION FACTORS (2022):
+Grid electricity: 0.694 kg CO2e/kWh (Peninsular Malaysia)
+Grid electricity: 0.553 kg CO2e/kWh (Sabah)
+Grid electricity: 0.474 kg CO2e/kWh (Sarawak)
+Source: Sustainable Energy Development Authority (SEDA) Malaysia
+
+TRANSPORT EMISSION FACTORS:
+Diesel (road transport): 2.68 kg CO2e/litre
+Petrol (road transport): 2.31 kg CO2e/litre
+CNG (compressed natural gas): 2.04 kg CO2e/kg
+Source: IPCC AR6, Malaysia Energy Commission
+
+WASTE EMISSION FACTORS:
+Municipal solid waste to landfill: 467 kg CO2e/tonne (Malaysia, tropical)
+Food waste to landfill: 520 kg CO2e/tonne (high methane generation)
+Paper to landfill: 380 kg CO2e/tonne
+Plastic to landfill: 50 kg CO2e/tonne (low biodegradability)
+Source: IPCC 2006 Guidelines, Malaysia-specific conditions
+
+RECYCLING SAVINGS (WRAP 2023):
+Mixed paper: 700 kg CO2e/tonne
+Corrugated cardboard (OCC): 750 kg CO2e/tonne
+PET bottles: 1,500 kg CO2e/tonne
+HDPE: 1,400 kg CO2e/tonne
+Mixed plastics: 800 kg CO2e/tonne
+Aluminium cans: 9,500 kg CO2e/tonne
+Steel/ferrous: 1,500 kg CO2e/tonne
+Glass: 300 kg CO2e/tonne
+Electronic waste: 2,000 kg CO2e/tonne (estimated)
+
+FOOD WASTE BIOCONVERSION (BSF):
+Landfill avoidance: 520 kg CO2e/tonne
+Fishmeal substitution: 30 kg CO2e/tonne
+Total BSF credit: 550 kg CO2e/tonne food waste processed
+
+SCOPE 3 CATEGORY 5 BENCHMARKS (Malaysia):
+Average diversion rate, manufacturing sector: 45-55%
+Best practice diversion rate: 70-80%
+Average carbon intensity, waste operations: 150-250 kg CO2e/tonne
+Best practice carbon intensity: 50-100 kg CO2e/tonne
+
+SDG TARGETS RELEVANT TO WASTE:
+SDG 12.5: By 2030, substantially reduce waste generation through prevention, reduction, recycling and reuse
+SDG 13.1: Strengthen resilience and adaptive capacity to climate-related hazards
+Malaysia NDC: 45% reduction in GHG emissions intensity by 2030 (vs 2005)

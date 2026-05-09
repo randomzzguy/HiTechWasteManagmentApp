@@ -1,0 +1,208 @@
+{% extends "base_report.html" %}
+
+{% block title %}ESG Monthly Report - {{ report_month }}{% endblock %}
+{% block report_title %}Environmental, Social & Governance (ESG) Monthly Report{% endblock %}
+
+{% block content %}
+<!-- Executive Summary -->
+<div class="summary-grid">
+    <div class="summary-item">
+        <div class="summary-label">Total Waste Diverted</div>
+        <div class="summary-value">{{ total_diverted_tonnes }}t</div>
+    </div>
+    <div class="summary-item">
+        <div class="summary-label">Recycling Rate</div>
+        <div class="summary-value">{{ recycling_rate }}%</div>
+    </div>
+    <div class="summary-item">
+        <div class="summary-label">CO₂ Avoided</div>
+        <div class="summary-value">{{ co2_avoided }}t</div>
+    </div>
+    <div class="summary-item">
+        <div class="summary-label">Landfill Diversion</div>
+        <div class="summary-value">{{ landfill_diversion }}%</div>
+    </div>
+</div>
+
+<!-- SDG Alignment -->
+<div class="section-title">Sustainable Development Goals (SDG) Contribution</div>
+<table>
+    <thead>
+        <tr>
+            <th>SDG</th>
+            <th>Target</th>
+            <th>Monthly Contribution</th>
+            <th>YTD Progress</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>SDG 12</td>
+            <td>Responsible Consumption</td>
+            <td>{{ sdg_12_contribution }} tonnes recycled</td>
+            <td><span class="status-badge status-success">On Track</span></td>
+        </tr>
+        <tr>
+            <td>SDG 13</td>
+            <td>Climate Action</td>
+            <td>{{ co2_avoided }} tonnes CO₂ avoided</td>
+            <td><span class="status-badge status-success">Exceeding</span></td>
+        </tr>
+        <tr>
+            <td>SDG 14</td>
+            <td>Life Below Water</td>
+            <td>{{ ocean_plastic_kg }} kg ocean-bound plastic recovered</td>
+            <td><span class="status-badge status-info">Active</span></td>
+        </tr>
+    </tbody>
+</table>
+
+<!-- Material Breakdown -->
+<div class="section-title">Material Recovery Breakdown</div>
+<table>
+    <thead>
+        <tr>
+            <th>Material Type</th>
+            <th>Weight (kg)</th>
+            <th>Weight (tonnes)</th>
+            <th>% of Total</th>
+            <th>Destination</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for material in material_breakdown %}
+        <tr>
+            <td>{{ material.type }}</td>
+            <td>{{ "{:,.1f}".format(material.weight_kg) }}</td>
+            <td>{{ "{:,.2f}".format(material.weight_kg / 1000) }}</td>
+            <td>{{ material.percentage }}%</td>
+            <td>{{ material.destination }}</td>
+        </tr>
+        {% endfor %}
+        <tr style="background: #e8f5e9; font-weight: bold;">
+            <td>TOTAL</td>
+            <td>{{ "{:,.1f}".format(total_recyclable_kg) }}</td>
+            <td>{{ "{:,.2f}".format(total_recyclable_kg / 1000) }}</td>
+            <td>100%</td>
+            <td>-</td>
+        </tr>
+    </tbody>
+</table>
+
+<!-- Scope 3 Emissions -->
+<div class="section-title">Scope 3 Emissions Summary (GHG Protocol)</div>
+<table>
+    <thead>
+        <tr>
+            <th>Category</th>
+            <th>Baseline Emissions (tCO₂e)</th>
+            <th>Avoided Emissions (tCO₂e)</th>
+            <th>Net Impact</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>Category 5: Waste Generated in Operations</td>
+            <td>{{ scope3_baseline }}</td>
+            <td>{{ scope3_avoided }}</td>
+            <td><span class="status-badge status-success">-{{ scope3_net }} tCO₂e</span></td>
+        </tr>
+    </tbody>
+</table>
+
+<!-- Carbon Calculations Detail -->
+<div class="section-title">Carbon Footprint Methodology</div>
+<div style="background: #f8f9fa; padding: 15px; border-radius: 6px; font-size: 9pt;">
+    <p><strong>Emission Factors Used (Malaysia-specific):</strong></p>
+    <ul style="margin: 10px 0; padding-left: 20px;">
+        <li>Landfill avoidance: {{ ef_landfill }} tCO₂e/tonne waste diverted</li>
+        <li>Recycling replacement: {{ ef_recycling }} tCO₂e/tonne material recovered</li>
+        <li>Transportation: {{ ef_transport }} tCO₂e/km ( Scope 3 Category 4)</li>
+    </ul>
+    <p style="margin-top: 10px; color: #666;">
+        Calculations follow GHG Protocol Scope 3 Category 5 (Waste Generated in Operations) 
+        and are verified against Malaysia's National GHG Inventory guidelines.
+    </p>
+</div>
+
+<!-- Client Certifications -->
+<div class="section-title">Certifications Issued This Month</div>
+<table>
+    <thead>
+        <tr>
+            <th>Client</th>
+            <th>Certificate Type</th>
+            <th>Waste Stream</th>
+            <th>Quantity</th>
+            <th>Date Issued</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for cert in certificates_issued %}
+        <tr>
+            <td>{{ cert.client_name }}</td>
+            <td>{{ cert.type }}</td>
+            <td>{{ cert.waste_stream }}</td>
+            <td>{{ cert.quantity }}</td>
+            <td>{{ cert.issued_at }}</td>
+        </tr>
+        {% endfor %}
+        {% if not certificates_issued %}
+        <tr>
+            <td colspan="5" style="text-align: center; color: #666;">No certificates issued this period</td>
+        </tr>
+        {% endif %}
+    </tbody>
+</table>
+
+<!-- ESG Scorecard -->
+<div class="section-title">ESG Performance Scorecard</div>
+<table>
+    <thead>
+        <tr>
+            <th>Pillar</th>
+            <th>KPI</th>
+            <th>Target</th>
+            <th>Actual</th>
+            <th>Status</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td rowspan="2">Environmental</td>
+            <td>Waste Diversion Rate</td>
+            <td>≥ 85%</td>
+            <td>{{ landfill_diversion }}%</td>
+            <td><span class="status-badge {% if landfill_diversion >= 85 %}status-success{% else %}status-warning{% endif %}">
+                {{ "Met" if landfill_diversion >= 85 else "Below Target" }}
+            </span></td>
+        </tr>
+        <tr>
+            <td>Carbon Intensity (kg CO₂/tonne)</td>
+            <td>≤ 50</td>
+            <td>{{ carbon_intensity }}</td>
+            <td><span class="status-badge {% if carbon_intensity <= 50 %}status-success{% else %}status-warning{% endif %}">
+                {{ "Met" if carbon_intensity <= 50 else "Above Target" }}
+            </span></td>
+        </tr>
+        <tr>
+            <td>Social</td>
+            <td>Client Satisfaction Score</td>
+            <td>≥ 4.5/5</td>
+            <td>{{ client_satisfaction }}</td>
+            <td><span class="status-badge {% if client_satisfaction >= 4.5 %}status-success{% else %}status-warning{% endif %}">
+                {{ "Met" if client_satisfaction >= 4.5 else "Below Target" }}
+            </span></td>
+        </tr>
+        <tr>
+            <td>Governance</td>
+            <td>Compliance Audit Score</td>
+            <td>100%</td>
+            <td>{{ compliance_score }}%</td>
+            <td><span class="status-badge {% if compliance_score == 100 %}status-success{% else %}status-danger{% endif %}">
+                {{ "Full" if compliance_score == 100 else "Issues Found" }}
+            </span></td>
+        </tr>
+    </tbody>
+</table>
+{% endblock %}

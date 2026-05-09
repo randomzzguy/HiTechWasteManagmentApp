@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Certificate of Recycling - {{ certificate_number }}</title>
+    <style>
+        @page {
+            size: A4 landscape;
+            margin: 2cm;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Helvetica Neue', Arial, sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #e4e8eb 100%);
+            min-height: 100vh;
+            padding: 40px;
+            color: #333;
+        }
+        
+        .certificate-container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.15);
+            overflow: hidden;
+        }
+        
+        .certificate-header {
+            background: linear-gradient(135deg, #1a5c2a 0%, #2d7a3e 100%);
+            color: white;
+            padding: 40px;
+            text-align: center;
+        }
+        
+        .company-logo {
+            font-size: 28px;
+            font-weight: bold;
+            letter-spacing: 2px;
+            margin-bottom: 8px;
+        }
+        
+        .company-subtitle {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+        
+        .certificate-body {
+            padding: 50px;
+        }
+        
+        .certificate-title {
+            text-align: center;
+            font-size: 42px;
+            font-weight: 700;
+            color: #1a5c2a;
+            margin-bottom: 8px;
+            letter-spacing: 3px;
+        }
+        
+        .certificate-subtitle {
+            text-align: center;
+            font-size: 16px;
+            color: #666;
+            margin-bottom: 40px;
+            text-transform: uppercase;
+            letter-spacing: 4px;
+        }
+        
+        .details-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px 40px;
+            margin-bottom: 30px;
+        }
+        
+        .detail-item {
+            border-bottom: 1px solid #e0e0e0;
+            padding-bottom: 12px;
+        }
+        
+        .detail-label {
+            font-size: 11px;
+            text-transform: uppercase;
+            color: #888;
+            letter-spacing: 1px;
+            margin-bottom: 4px;
+        }
+        
+        .detail-value {
+            font-size: 16px;
+            font-weight: 600;
+            color: #333;
+        }
+        
+        .materials-section {
+            margin-top: 40px;
+        }
+        
+        .section-title {
+            font-size: 14px;
+            text-transform: uppercase;
+            color: #666;
+            letter-spacing: 2px;
+            margin-bottom: 15px;
+        }
+        
+        .materials-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+        
+        .materials-table th {
+            background: #1a5c2a;
+            color: white;
+            padding: 14px 16px;
+            text-align: left;
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .materials-table td {
+            padding: 14px 16px;
+            border-bottom: 1px solid #eee;
+            font-size: 14px;
+        }
+        
+        .materials-table tr:nth-child(even) {
+            background: #f9f9f9;
+        }
+        
+        .materials-table tr.total-row {
+            background: #e8f5e9;
+            font-weight: bold;
+        }
+        
+        .materials-table .total-row td {
+            font-size: 16px;
+            color: #1a5c2a;
+        }
+        
+        .certification-text {
+            margin-top: 35px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            font-size: 14px;
+            line-height: 1.6;
+            color: #555;
+            text-align: center;
+            border-left: 4px solid #1a5c2a;
+        }
+        
+        .signatures {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 50px;
+            padding-top: 30px;
+        }
+        
+        .signature-block {
+            text-align: center;
+            flex: 1;
+        }
+        
+        .signature-line {
+            width: 200px;
+            border-top: 2px solid #333;
+            margin: 0 auto 10px;
+            padding-top: 10px;
+        }
+        
+        .signature-name {
+            font-weight: 600;
+            font-size: 14px;
+        }
+        
+        .signature-title {
+            font-size: 12px;
+            color: #666;
+            margin-top: 4px;
+        }
+        
+        .certificate-footer {
+            background: #f5f5f5;
+            padding: 20px 40px;
+            text-align: center;
+            font-size: 11px;
+            color: #888;
+            border-top: 1px solid #e0e0e0;
+        }
+        
+        .watermark {
+            position: absolute;
+            opacity: 0.03;
+            font-size: 200px;
+            color: #1a5c2a;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) rotate(-30deg);
+            font-weight: bold;
+            pointer-events: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="certificate-container">
+        <div class="watermark">CERTIFIED</div>
+        
+        <div class="certificate-header">
+            <div class="company-logo">HI-TECH WASTE MANAGEMENT</div>
+            <div class="company-subtitle">Licensed Waste Contractor | DOE Approved | ISO 14001 Certified</div>
+        </div>
+        
+        <div class="certificate-body">
+            <div class="certificate-title">CERTIFICATE</div>
+            <div class="certificate-subtitle">of Recycling</div>
+            
+            <div class="details-grid">
+                <div class="detail-item">
+                    <div class="detail-label">Certificate Number</div>
+                    <div class="detail-value">{{ certificate_number }}</div>
+                </div>
+                <div class="detail-item">
+                    <div class="detail-label">Date Issued</div>
+                    <div class="detail-value">{{ issued_date }}</div>
+                </div>
+                <div class="detail-item">
+                    <div class="detail-label">Client</div>
+                    <div class="detail-value">{{ client_name }}</div>
+                </div>
+                <div class="detail-item">
+                    <div class="detail-label">Issued By</div>
+                    <div class="detail-value">{{ issued_by_name }}</div>
+                </div>
+            </div>
+            
+            <div class="materials-section">
+                <div class="section-title">Material Breakdown</div>
+                <table class="materials-table">
+                    <thead>
+                        <tr>
+                            <th>Material Type</th>
+                            <th style="text-align: right;">Weight (kg)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for material, weight in materials %}
+                        <tr>
+                            <td>{{ material }}</td>
+                            <td style="text-align: right;">{{ "{:,.1f}".format(weight) }}</td>
+                        </tr>
+                        {% endfor %}
+                        <tr class="total-row">
+                            <td>TOTAL RECYCLABLES</td>
+                            <td style="text-align: right;">{{ "{:,.1f}".format(total_weight) }} kg</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            
+            <div class="certification-text">
+                This certifies that the above recyclable materials were collected from {{ client_name }} premises 
+                and delivered to licensed downstream buyers for recycling in accordance with Malaysian 
+                environmental regulations. All materials were handled in compliance with DOE guidelines 
+                and proper chain-of-custody documentation was maintained throughout the process.
+            </div>
+            
+            <div class="signatures">
+                <div class="signature-block">
+                    <div class="signature-line"></div>
+                    <div class="signature-name">{{ issued_by_name }}</div>
+                    <div class="signature-title">Authorised Signatory<br>Hi-Tech Waste Management Sdn. Bhd.</div>
+                </div>
+                <div class="signature-block">
+                    <div class="signature-line"></div>
+                    <div class="signature-name">Client Representative</div>
+                    <div class="signature-title">{{ client_name }}</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="certificate-footer">
+            Hi-Tech Waste Management Sdn. Bhd. | Shah Alam, Selangor, Malaysia<br>
+            ROC: 123456-X | DOE License: SW-2024-001 | ISO 14001:2015 Certified<br>
+            This certificate is valid only with the official company stamp and authorised signature.
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}Hi-Tech Waste Management Report{% endblock %}</title>
+    <style>
+        @page {
+            size: A4 portrait;
+            margin: 2cm 1.5cm;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Helvetica Neue', Arial, sans-serif;
+            font-size: 10pt;
+            line-height: 1.5;
+            color: #333;
+        }
+        
+        .report-header {
+            border-bottom: 3px solid #1a5c2a;
+            padding-bottom: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .company-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+        }
+        
+        .company-brand {
+            flex: 1;
+        }
+        
+        .company-name {
+            font-size: 18pt;
+            font-weight: bold;
+            color: #1a5c2a;
+            margin-bottom: 4px;
+        }
+        
+        .company-details {
+            font-size: 8pt;
+            color: #666;
+            line-height: 1.4;
+        }
+        
+        .report-meta {
+            text-align: right;
+            font-size: 9pt;
+        }
+        
+        .report-title {
+            font-size: 16pt;
+            font-weight: bold;
+            color: #1a5c2a;
+            margin: 15px 0 10px 0;
+        }
+        
+        .report-period {
+            font-size: 10pt;
+            color: #666;
+            margin-bottom: 15px;
+        }
+        
+        .content {
+            margin-top: 20px;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+            font-size: 9pt;
+        }
+        
+        th {
+            background: #1a5c2a;
+            color: white;
+            padding: 10px 8px;
+            text-align: left;
+            font-weight: 600;
+        }
+        
+        td {
+            padding: 8px;
+            border-bottom: 1px solid #e0e0e0;
+        }
+        
+        tr:nth-child(even) {
+            background: #f8f9fa;
+        }
+        
+        .metric-card {
+            background: #f8f9fa;
+            border-left: 4px solid #1a5c2a;
+            padding: 12px 15px;
+            margin: 10px 0;
+        }
+        
+        .metric-label {
+            font-size: 8pt;
+            color: #666;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .metric-value {
+            font-size: 18pt;
+            font-weight: bold;
+            color: #1a5c2a;
+            margin-top: 4px;
+        }
+        
+        .summary-grid {
+            display: flex;
+            gap: 15px;
+            margin: 20px 0;
+            flex-wrap: wrap;
+        }
+        
+        .summary-item {
+            flex: 1;
+            min-width: 140px;
+            background: #f8f9fa;
+            border-radius: 6px;
+            padding: 12px;
+            text-align: center;
+        }
+        
+        .summary-label {
+            font-size: 8pt;
+            color: #666;
+            margin-bottom: 4px;
+        }
+        
+        .summary-value {
+            font-size: 16pt;
+            font-weight: bold;
+            color: #1a5c2a;
+        }
+        
+        .section-title {
+            font-size: 12pt;
+            font-weight: bold;
+            color: #1a5c2a;
+            margin: 20px 0 10px 0;
+            border-bottom: 1px solid #e0e0e0;
+            padding-bottom: 5px;
+        }
+        
+        .footer {
+            margin-top: 40px;
+            padding-top: 10px;
+            border-top: 1px solid #e0e0e0;
+            font-size: 8pt;
+            color: #999;
+            display: flex;
+            justify-content: space-between;
+        }
+        
+        .status-badge {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 3px;
+            font-size: 8pt;
+            font-weight: 600;
+        }
+        
+        .status-success { background: #d4edda; color: #155724; }
+        .status-warning { background: #fff3cd; color: #856404; }
+        .status-danger { background: #f8d7da; color: #721c24; }
+        .status-info { background: #d1ecf1; color: #0c5460; }
+        
+        .chart-placeholder {
+            background: #f8f9fa;
+            border: 2px dashed #dee2e6;
+            border-radius: 8px;
+            padding: 40px;
+            text-align: center;
+            color: #6c757d;
+            margin: 20px 0;
+        }
+        
+        {% block extra_styles %}{% endblock %}
+    </style>
+</head>
+<body>
+    <div class="report-header">
+        <div class="company-info">
+            <div class="company-brand">
+                <div class="company-name">HI-TECH WASTE MANAGEMENT SDN. BHD.</div>
+                <div class="company-details">
+                    Shah Alam, Selangor, Malaysia<br>
+                    ROC: {{ company_reg_no or '123456-X' }} | DOE License: {{ doe_license or 'SW-2024-001' }}<br>
+                    Email: info@hitechwaste.com.my | Tel: +60 3-XXXX XXXX
+                </div>
+            </div>
+            <div class="report-meta">
+                <div style="font-weight: bold;">Report Generated</div>
+                <div>{{ generated_at }}</div>
+                <div style="margin-top: 8px; font-size: 8pt; color: #666;">
+                    Generated by: {{ generated_by or 'System' }}
+                </div>
+            </div>
+        </div>
+        
+        <div class="report-title">{% block report_title %}Report{% endblock %}</div>
+        <div class="report-period">
+            {% if period_from and period_to %}
+                Period: {{ period_from }} to {{ period_to }}
+            {% elif period_from %}
+                From: {{ period_from }}
+            {% elif period_to %}
+                Until: {{ period_to }}
+            {% else %}
+                All historical data
+            {% endif %}
+            {% if client_scope %}
+                <br>Scope: {{ client_scope }}
+            {% endif %}
+        </div>
+    </div>
+    
+    <div class="content">
+        {% block content %}{% endblock %}
+    </div>
+    
+    <div class="footer">
+        <span>Hi-Tech Waste Management - Confidential Report</span>
+        <span>Page <span class="pageNumber"></span> of <span class="totalPages"></span></span>
+    </div>
+</body>
+</html>

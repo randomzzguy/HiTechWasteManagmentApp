@@ -1,0 +1,67 @@
+﻿e-SWIS CONSIGNMENT NOTE USER GUIDE
+Department of Environment (DOE) Malaysia
+
+WHAT IS e-SWIS?
+The Electronic Scheduled Waste Information System (e-SWIS) is the DOE's online platform for tracking scheduled waste movements in Malaysia.
+URL: https://eswis.doe.gov.my
+
+WHO MUST USE e-SWIS?
+1. Waste Generators - companies that produce scheduled waste
+2. Waste Transporters - licensed contractors who transport scheduled waste
+3. Waste Processors - licensed facilities that treat/dispose of scheduled waste
+
+CONSIGNMENT NOTE FIELDS:
+1. Generator Information:
+   - Company name and address
+   - DOE registration number
+   - Contact person and phone
+   - SSM registration number
+
+2. Waste Information:
+   - SW code (from First Schedule)
+   - Waste description
+   - Quantity (kg or litres)
+   - Physical state (solid/liquid/sludge/gas)
+   - Container type and count
+   - UN number (if applicable)
+
+3. Transporter Information:
+   - Company name
+   - Vehicle registration number
+   - Driver name and IC number
+   - Transport date
+
+4. Processor Information:
+   - Facility name
+   - DOE license number
+   - Processing method
+
+STEP-BY-STEP PROCESS:
+1. Generator creates consignment note in e-SWIS
+2. Generator prints and signs the consignment note
+3. Transporter collects waste and signs the consignment note
+4. Transporter submits transport details in e-SWIS
+5. Processor receives waste and confirms receipt in e-SWIS
+6. DOE receives automatic notification of completed movement
+
+IMPORTANT NOTES:
+- Consignment note must accompany waste during transport
+- Original copy retained by generator for 3 years
+- Copy given to transporter
+- Copy submitted to DOE within 30 days
+- Electronic submission via e-SWIS is mandatory since 2020
+
+CENVIRO COORDINATION:
+- Book collection at least 5 working days in advance
+- Provide SW code, quantity, and physical state
+- Cenviro will issue collection reference number
+- Include Cenviro reference in consignment note
+- Cenviro contact: scheduling@cenviro.com.my
+
+COMMON ERRORS TO AVOID:
+1. Incorrect SW code - verify against First Schedule
+2. Missing container count
+3. Incorrect physical state
+4. Missing Cenviro reference number
+5. Unsigned consignment note
+6. Exceeding 90-day storage before arranging collection

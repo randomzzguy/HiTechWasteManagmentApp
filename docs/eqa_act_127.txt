@@ -1,0 +1,64 @@
+﻿ENVIRONMENTAL QUALITY ACT 1974 (ACT 127)
+Malaysia - Key Provisions for Waste Management
+
+PART I - PRELIMINARY
+Section 2 - Interpretation
+"Scheduled waste" means any waste prescribed under the Environmental Quality (Scheduled Wastes) Regulations 2005.
+"Licensee" means a person who holds a licence issued under this Act.
+"Premises" includes any land, building, or structure.
+
+PART IV - PROHIBITION AND CONTROL OF POLLUTION
+Section 22 - Prohibition on pollution of inland waters
+No person shall, unless licensed, emit, discharge or deposit any environmentally hazardous substances, pollutants or wastes into any inland waters.
+
+Section 23 - Prohibition on pollution of Malaysian waters
+No person shall, unless licensed, emit, discharge or deposit any environmentally hazardous substances into Malaysian waters.
+
+Section 24 - Prohibition on pollution of the atmosphere
+No person shall, unless licensed, emit, discharge or deposit any environmentally hazardous substances into the atmosphere.
+
+Section 25 - Prohibition on pollution of the soil
+No person shall, unless licensed, emit, discharge or deposit any environmentally hazardous substances into or onto any soil.
+
+PART V - SCHEDULED WASTES
+Section 34B - Scheduled wastes
+(1) No person shall, unless licensed, treat, store, transport or dispose of any scheduled waste.
+(2) Any person who contravenes subsection (1) commits an offence and shall, on conviction, be liable to a fine not exceeding five hundred thousand ringgit or to imprisonment for a period not exceeding five years or to both.
+
+SCHEDULED WASTES REGULATIONS 2005 - KEY PROVISIONS:
+
+Regulation 7 - Storage of scheduled wastes
+(1) A waste generator shall store scheduled wastes in a storage area that:
+(a) is clearly labelled with the scheduled waste code and hazard symbols
+(b) has adequate containment to prevent spillage
+(c) is secured against unauthorized access
+(d) has adequate ventilation
+
+Regulation 8 - 90-Day Storage Rule
+(1) A waste generator shall not store scheduled wastes for more than 180 days from the date of generation.
+(2) For certain categories (SW 305, SW 410, SW 420), the storage limit is 90 days.
+(3) The Director General may grant an extension upon written application.
+
+Regulation 9 - Consignment Note Requirements
+(1) No person shall transport scheduled wastes without a consignment note.
+(2) The consignment note shall be in the form prescribed in the Third Schedule.
+(3) The consignment note shall be submitted to the Director General within 30 days.
+
+e-SWIS (Electronic Scheduled Waste Information System):
+- All consignment notes must be submitted electronically via e-SWIS portal
+- URL: https://eswis.doe.gov.my
+- Generator, transporter, and processor must all register on e-SWIS
+- Real-time tracking of scheduled waste movements
+
+CENVIRO SDN BHD:
+- Primary licensed scheduled waste processor in Malaysia
+- Bukit Nanas Integrated Waste Management Facility, Pahang
+- Accepts: SW 305, SW 410, SW 420, SW 401, SW 408, and others
+- Contact: +603-9235 2000
+- Requires advance booking for collection
+
+ENFORCEMENT:
+- Department of Environment (DOE) Malaysia enforces EQA Act 127
+- Regular inspections of waste generators and storage facilities
+- Penalties: Fine up to RM500,000 and/or imprisonment up to 5 years
+- Repeat offenders face enhanced penalties

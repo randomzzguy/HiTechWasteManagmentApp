@@ -1,0 +1,240 @@
+{% extends "base_report.html" %}
+
+{% block title %}Compliance Audit Report{% endblock %}
+{% block report_title %}Scheduled Waste Compliance Audit Report{% endblock %}
+
+{% block content %}
+<!-- Compliance Status Overview -->
+<div class="summary-grid">
+    <div class="summary-item">
+        <div class="summary-label">Total SW Batches</div>
+        <div class="summary-value">{{ total_batches }}</div>
+    </div>
+    <div class="summary-item">
+        <div class="summary-label">In Storage</div>
+        <div class="summary-value">{{ in_storage_batches }}</div>
+    </div>
+    <div class="summary-item">
+        <div class="summary-label">Disposed</div>
+        <div class="summary-value">{{ disposed_batches }}</div>
+    </div>
+    <div class="summary-item">
+        <div class="summary-label">Compliance Rate</div>
+        <div class="summary-value" style="color: {% if compliance_rate >= 95 %}#1a5c2a{% else %}#dc3545{% endif %};">{{ compliance_rate }}%</div>
+    </div>
+</div>
+
+<!-- 90-Day Rule Compliance -->
+<div class="section-title">EQA Act 127 - 90-Day Storage Rule Compliance</div>
+<table>
+    <thead>
+        <tr>
+            <th>Risk Level</th>
+            <th>Batch Count</th>
+            <th>Description</th>
+            <th>Action Required</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td><span class="status-badge status-danger">CRITICAL</span></td>
+            <td>{{ overdue_batches }}</td>
+            <td>Over 90 days (non-compliant)</td>
+            <td>Immediate disposal required</td>
+        </tr>
+        <tr>
+            <td><span class="status-badge status-warning">WARNING</span></td>
+            <td>{{ warning_batches }}</td>
+            <td>75-89 days (approaching limit)</td>
+            <td>Schedule disposal within 7 days</td>
+        </tr>
+        <tr>
+            <td><span class="status-badge status-info">ATTENTION</span></td>
+            <td>{{ attention_batches }}</td>
+            <td>60-74 days (monitor closely)</td>
+            <td>Plan disposal within 14 days</td>
+        </tr>
+        <tr>
+            <td><span class="status-badge status-success">COMPLIANT</span></td>
+            <td>{{ compliant_batches }}</td>
+            <td>Under 60 days</td>
+            <td>No immediate action</td>
+        </tr>
+    </tbody>
+</table>
+
+<!-- Batch Details -->
+<div class="section-title">Scheduled Waste Batch Details</div>
+<table>
+    <thead>
+        <tr>
+            <th>Batch ID</th>
+            <th>SW Code</th>
+            <th>Client</th>
+            <th>Storage Start</th>
+            <th>Days in Storage</th>
+            <th>Quantity (kg)</th>
+            <th>Status</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for batch in batch_details %}
+        <tr>
+            <td>{{ batch.id }}</td>
+            <td>{{ batch.sw_code }}</td>
+            <td>{{ batch.client_name }}</td>
+            <td>{{ batch.storage_start_date }}</td>
+            <td>
+                {% if batch.days_in_storage > 89 %}
+                <span style="color: #dc3545; font-weight: bold;">{{ batch.days_in_storage }} days</span>
+                {% elif batch.days_in_storage > 74 %}
+                <span style="color: #ffc107; font-weight: bold;">{{ batch.days_in_storage }} days</span>
+                {% else %}
+                {{ batch.days_in_storage }} days
+                {% endif %}
+            </td>
+            <td>{{ "{:,.1f}".format(batch.quantity_kg) }}</td>
+            <td>
+                {% if batch.status == 'in_storage' %}
+                <span class="status-badge status-info">In Storage</span>
+                {% elif batch.status == 'scheduled_for_disposal' %}
+                <span class="status-badge status-warning">Scheduled</span>
+                {% elif batch.status == 'disposed' %}
+                <span class="status-badge status-success">Disposed</span>
+                {% else %}
+                <span class="status-badge">{{ batch.status }}</span>
+                {% endif %}
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<!-- SW Code Summary -->
+<div class="section-title">Summary by Scheduled Waste Code</div>
+<table>
+    <thead>
+        <tr>
+            <th>SW Code</th>
+            <th>Description</th>
+            <th>Batches</th>
+            <th>Total Qty (kg)</th>
+            <th>In Storage</th>
+            <th>Disposed</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for sw in sw_summary %}
+        <tr>
+            <td><strong>{{ sw.code }}</strong></td>
+            <td>{{ sw.description }}</td>
+            <td>{{ sw.batch_count }}</td>
+            <td>{{ "{:,.1f}".format(sw.total_kg) }}</td>
+            <td>{{ sw.in_storage }}</td>
+            <td>{{ sw.disposed }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<!-- Consignment Notes -->
+<div class="section-title">e-SWIS Consignment Notes (eCN) Issued</div>
+<table>
+    <thead>
+        <tr>
+            <th>eCN Number</th>
+            <th>Batch ID</th>
+            <th>SW Code</th>
+            <th>Quantity (kg)</th>
+            <th>Transporter</th>
+            <th>Disposal Facility</th>
+            <th>Date Issued</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for ecn in consignment_notes %}
+        <tr>
+            <td>{{ ecn.number }}</td>
+            <td>{{ ecn.batch_id }}</td>
+            <td>{{ ecn.sw_code }}</td>
+            <td>{{ "{:,.1f}".format(ecn.quantity_kg) }}</td>
+            <td>{{ ecn.transporter }}</td>
+            <td>{{ ecn.disposal_facility }}</td>
+            <td>{{ ecn.issued_at }}</td>
+        </tr>
+        {% endfor %}
+        {% if not consignment_notes %}
+        <tr>
+            <td colspan="7" style="text-align: center; color: #666;">No consignment notes issued this period</td>
+        </tr>
+        {% endif %}
+    </tbody>
+</table>
+
+<!-- Disposal Certificates -->
+<div class="section-title">Disposal Certificates Received</div>
+<table>
+    <thead>
+        <tr>
+            <th>Certificate No.</th>
+            <th>Batch ID</th>
+            <th>Disposal Facility</th>
+            <th>Disposal Method</th>
+            <th>Quantity (kg)</th>
+            <th>Date Received</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for cert in disposal_certificates %}
+        <tr>
+            <td>{{ cert.number }}</td>
+            <td>{{ cert.batch_id }}</td>
+            <td>{{ cert.facility }}</td>
+            <td>{{ cert.method }}</td>
+            <td>{{ "{:,.1f}".format(cert.quantity_kg) }}</td>
+            <td>{{ cert.received_at }}</td>
+        </tr>
+        {% endfor %}
+        {% if not disposal_certificates %}
+        <tr>
+            <td colspan="6" style="text-align: center; color: #666;">No disposal certificates received this period</td>
+        </tr>
+        {% endif %}
+    </tbody>
+</table>
+
+<!-- Audit Findings -->
+<div class="section-title">Audit Findings & Recommendations</div>
+<div style="background: #f8f9fa; padding: 15px; border-radius: 6px; font-size: 9pt;">
+    {% if audit_findings %}
+    <ul style="margin: 0; padding-left: 20px;">
+        {% for finding in audit_findings %}
+        <li style="margin-bottom: 8px;">
+            <strong>[{{ finding.severity }}]</strong> {{ finding.description }}
+            <br><em>Recommendation: {{ finding.recommendation }}</em>
+        </li>
+        {% endfor %}
+    </ul>
+    {% else %}
+    <p style="color: #1a5c2a; margin: 0;">
+        <strong>✓ No compliance issues identified.</strong> All scheduled waste batches are within regulatory storage limits 
+        and proper documentation (e-SWIS consignment notes, disposal certificates) is maintained.
+    </p>
+    {% endif %}
+</div>
+
+<!-- Regulatory Reference -->
+<div class="section-title">Regulatory Reference</div>
+<div style="background: #f8f9fa; padding: 15px; border-radius: 6px; font-size: 9pt;">
+    <p><strong>Environmental Quality Act 1974 (Act 127) - Scheduled Waste</strong></p>
+    <ul style="margin: 10px 0; padding-left: 20px;">
+        <li>Regulation 9: Maximum storage period is 180 days from date of generation</li>
+        <li>Regulation 10: Consignment note (e-SWIS) required for all scheduled waste transportation</li>
+        <li>Regulation 11: Disposal only at licensed facilities with certificate of destruction</li>
+    </ul>
+    <p style="margin-top: 10px; color: #666;">
+        This report covers compliance with Malaysia Department of Environment (DOE) requirements.
+        All data is stored for 7 years per regulatory requirements.
+    </p>
+</div>
+{% endblock %}
