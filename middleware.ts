@@ -1,10 +1,8 @@
-import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
+import { updateSession } from "@/lib/supabase/middleware";
 
 export async function middleware(request: NextRequest) {
-  // Pass through all requests without Supabase authentication
-  // To enable Supabase auth, add NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY
-  return NextResponse.next();
+  return await updateSession(request);
 }
 
 export const config = {
